@@ -6,6 +6,7 @@
 /*eslint no-console: [0]*/
 import 'intersection-observer';
 import Vue from 'vue/dist/vue.esm.js';
+import findIndex from 'lodash-es/findIndex';
 import flatten from 'lodash-es/flatten';
 import uniq from 'lodash-es/uniq';
 import debounce from 'lodash-es/debounce';
@@ -17,6 +18,7 @@ import VLazyImage from 'v-lazy-image';
 
 ( function( $, window, undefined ) { // eslint-disable-line no-unused-vars
 	const _ = {
+		findIndex: findIndex,
 		flatten: flatten,
 		uniq: uniq,
 		debounce: debounce,
@@ -24,34 +26,6 @@ import VLazyImage from 'v-lazy-image';
 		sortBy: sortBy,
 		union: union,
 	};
-
-	function getStates( states, selectedState, selectedCity, selectedFormat ) {
-		if ( ! states.length ) {
-			return [];
-		}
-		if ( selectedState !== 'all' ) {
-			states = _.flatten( states.filter( function( state ) {
-				if ( state.abbr === selectedState ) {
-					return state;
-				}
-			} ) );
-		}
-		if ( selectedState !== 'all' && selectedCity !== 'all' ) {
-			states = _.flatten( states.filter( function( state ) {
-				if ( state.cities.indexOf( selectedCity ) > -1 ) {
-					return state;
-				}
-			} ) );
-		}
-		if ( selectedFormat !== 'all' ) {
-			states = _.flatten( states.filter( function( state ) {
-				if ( state.formats.indexOf( selectedFormat ) > -1 ) {
-					return state;
-				}
-			} ) );
-		}
-		return states;
-	}
 
 	const finder = new Vue( { // eslint-disable-line no-unused-vars
 		components: {
@@ -75,8 +49,9 @@ import VLazyImage from 'v-lazy-image';
 						<label for="stations-states">
 							Market State:
 						</label>
-						<select v-model="selected_state" id="stations-states">
-							<option value="all">All</option>
+						<select v-model="selected_state" id="stations-states" @change="selectState">
+							<option value="all" selected="selected" v-if="selected_state=='all'">All</option>
+							<option value="all" v-else>All</option>
 							<option v-for="state in states" v-bind:value="state.abbr">{{state.name}}</option>
 						</select>
 					</div>
@@ -84,9 +59,10 @@ import VLazyImage from 'v-lazy-image';
 						<label for="stations-cities">
 							Market City:
 						</label>
-						<select v-model="selected_city" id="stations-cities">
-							<option value="all">All</option>
-							<option v-for="city in filteredCities" v-bind:value="city">{{city}}</option>
+						<select v-model="selected_city" id="stations-cities" @change="selectCity">
+							<option value="all" selected="selected" v-if="selected_city=='all'">All</option>
+							<option value="all" v-else>All</option>
+							<option v-for="city in filteredCities" v-bind:value="city" v-bind:data-state="city.state">{{city.name}}</option>
 						</select>
 					</div>
 					<div class="crsg-sf-formats">
@@ -94,7 +70,8 @@ import VLazyImage from 'v-lazy-image';
 							Formats:
 						</label>
 						<select v-model="selected_format" id="stations-formats">
-							<option value="all">All</option>
+							<option value="all" selected="selected" v-if="selected_format=='all'">All</option>
+							<option value="all" v-else>All</option>
 							<option v-for="format in filteredFormats" v-bind:value="format">{{format}}</option>
 						</select>
 					</div>
@@ -106,7 +83,7 @@ import VLazyImage from 'v-lazy-image';
 						<button v-on:click="query = ''">Clear</button>
 					</div>
 				</div>
-				<div class="crsg-sf-stations">
+				<div v-if="filteredStations.length" class="crsg-sf-stations">
 					<a :href="station.url" target="_blank" class="crsg-sf-station" v-for="station in filteredStations">
 						<figure>
 							<v-lazy-image :src="station.image" src-placeholder="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
@@ -116,21 +93,77 @@ import VLazyImage from 'v-lazy-image';
 						<div class="crsg-sf-locale">{{station.city}}, {{station.state}}</div>
 					</a>
 				</div>
+				<div v-else class="crsg-sf-stations">
+					<span v-if="stations.length">No stations found.</span>
+				</div>
 			</div>
 		`,
 		methods: {
 			debounceQuery: _.debounce( function( e ) {
 				this.query = e.target.value;
 			}, 200 ),
+			getFilteredStates: function() {
+				if (  ! this.states.length ) {
+					return [];
+				}
+				const props = this;
+				const filteredStates = _.flatten(
+					this.states.filter( function( state ) {
+						let found = true;
+						if (
+							props.selected_state !== 'all' &&
+							props.selected_state !== state.abbr
+						) {
+							found = false;
+						}
+						if (
+							props.selected_city !== 'all' &&
+							props.selected_city.state !== state.abbr
+						) {
+							found = false;
+						}
+						if (
+							props.selected_format !== 'all' &&
+							! state.formats.includes( props.selected_format )
+						) {
+							found = false;
+						}
+
+						if ( found ) {
+							return state;
+						}
+					} )
+				);
+
+				return filteredStates;
+			},
+			selectCity: function() {
+				const props = this;
+				props.selected_state = props.selected_city.state;
+			},
+			selectState: function() {
+				const props = this;
+				// Reset selected city if it's not in this state
+				if (
+					props.selected_city !== 'all' &&
+					props.selected_city.state &&
+					props.selected_city.state !== props.selected_state
+				) {
+					props.selected_city = 'all';
+				}
+				// Reset selected format if there are no stations
+				// in this state in that format
+				if (
+					props.selected_format !== 'all' &&
+					props.filteredFormats.length < 1
+				) {
+					props.selected_format = 'all'
+				}
+			},
 		},
 		computed: {
 			filteredStates: function( ) {
-				const states = getStates(
-					this.states,
-					this.selected_state,
-					this.selected_city,
-					this.selected_format
-				);
+				const states = this.getFilteredStates();
 
 				if ( states.length === 1 ) {
 					this.selected_state = states[ 0 ].abbr;
@@ -138,29 +171,27 @@ import VLazyImage from 'v-lazy-image';
 				return states;
 			},
 			filteredCities: function( ) {
-				const states = getStates(
-					this.states,
-					this.selected_state,
-					this.selected_city,
-					this.selected_format
-				);
-				const cities = _.flatten( _.map( states, 'cities' ) );
+				const states = this.getFilteredStates();
+				const cities = [];
+				states.forEach( function( state ) {
+					state.cities.forEach( function( city ) {
+						cities.push({
+							state: state.abbr,
+							name: city,
+						} );
+					} );
+				} );
 
 				if ( cities.length === 1 ) {
 					this.selected_city = cities[ 0 ];
 				}
-				return cities.sort( );
+				return _.sortBy( cities, [ 'name' ] );
 			},
 			filteredFormats: function( ) {
 				if ( this.selected_state === 'all' ) {
 					return _.uniq( _.flatten( _.map( this.states, 'formats' ) ) );
 				}
-				const states = getStates(
-					this.states,
-					this.selected_state,
-					this.selected_city,
-					this.selected_format
-				);
+				const states = this.getFilteredStates();
 				const formats = _.uniq( _.flatten( _.map( states, 'formats' ) ) );
 
 				if ( formats.length === 1 ) {
@@ -170,9 +201,28 @@ import VLazyImage from 'v-lazy-image';
 			},
 			filteredStations: function( ) {
 				const props = this;
+
 				const stations = this.stations.filter( function( station ) {
-					let ret = station;
+					if (
+						props.selected_state !== 'all' &&
+						props.selected_state !== station.state
+					) {
+						return;
+					}
+					if (
+						props.selected_city !== 'all' &&
+						props.selected_city.name !== station.city
+					) {
+						return;
+					}
+					if (
+						props.selected_format !== 'all' &&
+						props.selected_format !== station.format
+					) {
+						return;
+					}
 					if ( props.query.length ) {
+						let found = false;
 						const searchable = [
 							station.id,
 							station.format,
@@ -181,43 +231,23 @@ import VLazyImage from 'v-lazy-image';
 							station.city,
 							station.state,
 						];
-						let found = false;
-
-						searchable.forEach( function( value ) {
-							if ( value.toLowerCase( ).indexOf( props.query.toLowerCase( ) ) > -1 ) {
+						searchable.forEach( function( val ) {
+							if ( val.toLowerCase().indexOf( props.query.toLowerCase() ) > -1 ) {
 								found = true;
 							}
 						} );
 						if ( ! found ) {
-							ret = null;
+							return;
 						}
 					}
-					if ( props.selected_state !== 'all' && station.state !== props.selected_state ) {
-						ret = null;
-					}
-					if ( props.selected_city !== 'all' && station.city !== props.selected_city ) {
-						ret = null;
-					}
-					if ( props.selected_format !== 'all' && station.format !== props.selected_format ) {
-						ret = null;
-					}
-					if ( ret ) {
-						return ret;
-					}
+					return station;
 				} );
 
 				_.sortBy( stations, [ 'city', 'state', 'id' ] );
-
 				return stations;
 			},
 		},
 		watch: {
-			selected_state: function( ) {
-				this.selected_city = 'all';
-				if ( ! this.filteredFormats.includes( this.selected_format ) ) {
-					this.selected_format = 'all';
-				}
-			},
 		},
 		created: function( ) {
 			const props = this;
