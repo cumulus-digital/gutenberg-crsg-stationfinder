@@ -27,7 +27,7 @@ const autoprefixer = require( 'autoprefixer' );
 const ExtractTextPlugin = require( 'extract-text-webpack-plugin' );
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
-const shouldUseSourceMap = true; //process.env.GENERATE_SOURCEMAP === 'true';
+const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP === 'true';
 
 // Extract style.css for both editor and frontend styles.
 const blocksCSSPlugin = new ExtractTextPlugin( {

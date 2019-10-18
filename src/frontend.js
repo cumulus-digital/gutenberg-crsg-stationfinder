@@ -15,11 +15,8 @@ import union from 'lodash-es/union';
 //import { flatten, uniq, debounce, map, sortBy, union } from 'lodash-es';
 import VLazyImage from 'v-lazy-image';
 
-/**
- * Station finder
- */
 ( function( $, window, undefined ) { // eslint-disable-line no-unused-vars
-	var _ = {
+	const _ = {
 		flatten: flatten,
 		uniq: uniq,
 		debounce: debounce,
@@ -29,6 +26,9 @@ import VLazyImage from 'v-lazy-image';
 	};
 
 	function getStates( states, selectedState, selectedCity, selectedFormat ) {
+		if ( ! states.length ) {
+			return [];
+		}
 		if ( selectedState !== 'all' ) {
 			states = _.flatten( states.filter( function( state ) {
 				if ( state.abbr === selectedState ) {
@@ -58,7 +58,7 @@ import VLazyImage from 'v-lazy-image';
 			VLazyImage,
 		},
 		el: '.crsg-stationfinder',
-		data: function() {
+		data: function( ) {
 			return {
 				stations: [],
 				states: {},
@@ -124,55 +124,55 @@ import VLazyImage from 'v-lazy-image';
 			}, 200 ),
 		},
 		computed: {
-			filteredStates: function() {
-				const finder = this;
+			filteredStates: function( ) {
 				const states = getStates(
-					finder.states,
-					finder.selected_state,
-					finder.selected_city,
-					finder.selected_format
+					this.states,
+					this.selected_state,
+					this.selected_city,
+					this.selected_format
 				);
 
 				if ( states.length === 1 ) {
-					finder.selected_state = states[ 0 ].abbr;
+					this.selected_state = states[ 0 ].abbr;
 				}
 				return states;
 			},
-			filteredCities: function() {
-				const finder = this;
+			filteredCities: function( ) {
 				const states = getStates(
-					finder.states,
-					finder.selected_state,
-					finder.selected_city,
-					finder.selected_format
+					this.states,
+					this.selected_state,
+					this.selected_city,
+					this.selected_format
 				);
 				const cities = _.flatten( _.map( states, 'cities' ) );
 
 				if ( cities.length === 1 ) {
-					finder.selected_city = cities[ 0 ];
+					this.selected_city = cities[ 0 ];
 				}
-				return cities.sort();
+				return cities.sort( );
 			},
-			filteredFormats: function() {
-				const finder = this;
+			filteredFormats: function( ) {
+				if ( this.selected_state === 'all' ) {
+					return _.uniq( _.flatten( _.map( this.states, 'formats' ) ) );
+				}
 				const states = getStates(
-					finder.states,
-					finder.selected_state,
-					finder.selected_city,
-					finder.selected_format
+					this.states,
+					this.selected_state,
+					this.selected_city,
+					this.selected_format
 				);
 				const formats = _.uniq( _.flatten( _.map( states, 'formats' ) ) );
 
 				if ( formats.length === 1 ) {
-					finder.selected_format = formats[ 0 ];
+					this.selected_format = formats[ 0 ];
 				}
-				return formats.sort();
+				return formats.sort( );
 			},
-			filteredStations: function() {
-				const finder = this;
+			filteredStations: function( ) {
+				const props = this;
 				const stations = this.stations.filter( function( station ) {
 					let ret = station;
-					if ( finder.query.length ) {
+					if ( props.query.length ) {
 						const searchable = [
 							station.id,
 							station.format,
@@ -181,9 +181,10 @@ import VLazyImage from 'v-lazy-image';
 							station.city,
 							station.state,
 						];
-						let	found;
+						let found = false;
+
 						searchable.forEach( function( value ) {
-							if ( value.toLowerCase().indexOf( finder.query.toLowerCase() ) > -1) {
+							if ( value.toLowerCase( ).indexOf( props.query.toLowerCase( ) ) > -1 ) {
 								found = true;
 							}
 						} );
@@ -191,13 +192,13 @@ import VLazyImage from 'v-lazy-image';
 							ret = null;
 						}
 					}
-					if ( finder.selected_state !== 'all' && station.state !== finder.selected_state ) {
+					if ( props.selected_state !== 'all' && station.state !== props.selected_state ) {
 						ret = null;
 					}
-					if ( finder.selected_city !== 'all' && station.city !== finder.selected_city ) {
+					if ( props.selected_city !== 'all' && station.city !== props.selected_city ) {
 						ret = null;
 					}
-					if ( finder.selected_format !== 'all' && station.format !== finder.selected_format ) {
+					if ( props.selected_format !== 'all' && station.format !== props.selected_format ) {
 						ret = null;
 					}
 					if ( ret ) {
@@ -211,21 +212,24 @@ import VLazyImage from 'v-lazy-image';
 			},
 		},
 		watch: {
-			selected_state: function() {
+			selected_state: function( ) {
 				this.selected_city = 'all';
+				if ( ! this.filteredFormats.includes( this.selected_format ) ) {
+					this.selected_format = 'all';
+				}
 			},
 		},
-		created: function() {
-			const finder = this;
+		created: function( ) {
+			const props = this;
 			$.getJSON(
 				'https://player.westwoodone.com/stations/stations.ashx',
 				function( response ) {
 					finder.stations = response;
 
-					let states = {};
+					const states = {};
 
 					finder.stations.forEach( function( station ) {
-						if ( states.hasOwnProperty( station.state ) ) {
+						if ( states.hasOwnProperty( station.state )) {
 							states[ station.state ].cities = _.union(
 								states[ station.state ].cities,
 								[ station.city ]
@@ -240,22 +244,23 @@ import VLazyImage from 'v-lazy-image';
 							abbr: station.state,
 							name: stateNames[ station.state ],
 							cities: [ station.city ],
-							formats: [ station.format ],
+							formats: [ station.format ]
 						};
 					} );
 
-					let sortedStates = _.sortBy( states, 'name' );
+					const sortedStates = _.sortBy( states, 'name' );
 					sortedStates.forEach( function( state ) {
-						state.cities = state.cities.sort();
-						state.formats = state.formats.sort();
+						state.cities = state.cities.sort( );
+						state.formats = state.formats.sort( );
 					} );
-					finder.states = sortedStates;
+					props.states = sortedStates;
 				}
 			);
 		},
 	} );
 
-	const stateNames = { AZ: 'Arizona',
+	const stateNames = {
+		AZ: 'Arizona',
 		AL: 'Alabama',
 		AK: 'Alaska',
 		AR: 'Arkansas',

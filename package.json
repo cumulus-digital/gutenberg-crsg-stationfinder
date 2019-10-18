@@ -82,7 +82,7 @@
         "transform-runtime",
         {
           "helpers": false,
-          "polyfill": false,
+          "polyfill": true,
           "regenerator": true
         }
       ]
