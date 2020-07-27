@@ -1,5 +1,9 @@
 :root {
 
+	.full-width .crsg-stationfinder {
+		padding: 0 1em;
+	}
+	
 	.crsg-sf-filters {
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr 2fr;
