@@ -5,6 +5,7 @@ module.exports = {
 	...defaultConfig,
 	resolve: { alias: { vue: 'vue/dist/vue.esm.js' } },
 	externals: {
+		...defaultConfig.externals,
 		$: 'jQuery',
 		jquery: 'jQuery'
 	},
