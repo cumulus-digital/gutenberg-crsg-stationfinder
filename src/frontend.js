@@ -11,6 +11,8 @@ import sortBy  from 'lodash/sortBy';
 import union from 'lodash/union';
 import VLazyImage from 'v-lazy-image';
 
+const APIURL = 'https://player.cumulusmedia.com/stations.ashx';
+
 const $j = jQuery.noConflict();
 
 const _ = {
@@ -264,7 +266,7 @@ const finder = new Vue( {
 	created: function( ) {
 		const props = this;
 		$j.getJSON(
-			'https://player.westwoodone.com/stations/stations.ashx',
+			APIURL,
 			function( response ) {
 				finder.stations = response;
 
