@@ -244,6 +244,7 @@ const finder = new Vue( {
 						station.id,
 						station.format,
 						station.freq,
+						station.calls,
 						station.band,
 						station.city,
 						station.state,
