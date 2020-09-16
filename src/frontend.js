@@ -87,11 +87,12 @@ const finder = new Vue( {
 					<a
 						:href="station.url"
 						:data-id="station.id"
-						:data-freq="station.freq"
-						:data-band="station.band"
 						:data-format="station.format"
 						:data-city="station.city"
 						:data-state="station.state"
+						:data-freq="station.freq"
+						:data-calls="station.calls"
+						:data-band="station.band"
 						target="_blank"
 						rel="noopener"
 					>
@@ -102,8 +103,10 @@ const finder = new Vue( {
 							/>
 						</figure>
 						<h3>{{station.id}}</h3>
-						<div class="crsg-sf-details">{{station.freq}} {{station.band}} / {{station.format}}</div>
 						<div class="crsg-sf-locale">{{station.city}}, {{station.state}}</div>
+						<div class="crsg-sf-details">{{station.freq}}</div>
+						<div class="crsg-sf-details">{{station.calls}} {{station.band}}</div>
+						<div class="crsg-sf-details">{{station.format}}</div>
 					</a>
 				</li>
 			</ul>
