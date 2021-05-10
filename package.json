@@ -11,12 +11,12 @@
 		"start": "wp-scripts start"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^14.1.1",
+		"@wordpress/scripts": "^15.0.1",
 		"path": "^0.12.7"
 	},
 	"dependencies": {
 		"intersection-observer": "^0.11.0",
-		"lodash": "^4.17.19",
+		"lodash": "^4.17.21",
 		"v-lazy-image": "^1.4.0",
 		"vue": "^2.6.11"
 	}
