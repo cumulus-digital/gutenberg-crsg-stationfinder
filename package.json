@@ -1,6 +1,6 @@
 {
 	"name": "crsg-stationfinder",
-	"version": "2.0.7",
+	"version": "2.0.9",
 	"private": true,
 	"scripts": {
 		"build": "wp-scripts build",
@@ -12,10 +12,10 @@
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^15.0.1",
-		"path": "^0.12.7"
+		"jquery": "^3.6.0"
 	},
 	"dependencies": {
-		"intersection-observer": "^0.11.0",
+		"intersection-observer": "^0.12.0",
 		"lodash": "^4.17.21",
 		"v-lazy-image": "^1.4.0",
 		"vue": "^2.6.11"
