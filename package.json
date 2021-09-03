@@ -1,6 +1,6 @@
 {
 	"name": "crsg-stationfinder",
-	"version": "2.0.9",
+	"version": "2.0.10",
 	"private": true,
 	"scripts": {
 		"build": "wp-scripts build",
@@ -11,7 +11,7 @@
 		"start": "wp-scripts start"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^15.0.1",
+		"@wordpress/scripts": "^18.0.0",
 		"jquery": "^3.6.0"
 	},
 	"dependencies": {

@@ -12,7 +12,7 @@ namespace CRSG\Wordpress\Gutenberg\StationFinder;
  *
  * @category Gutenberg
  * @author vena
- * @version 2.0.9
+ * @version 2.0.10
  */
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) exit;

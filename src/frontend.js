@@ -3,12 +3,9 @@ import './scss/frontend.scss';
 import jQuery from 'jquery';
 import 'intersection-observer';
 import Vue from 'vue';
-import flatten from 'lodash/flatten';
-import uniq from 'lodash/uniq';
-import debounce from 'lodash/debounce';
-import map from 'lodash/map';
-import sortBy  from 'lodash/sortBy';
-import union from 'lodash/union';
+import {
+	flatten, uniq, debounce, map, sortBy, union
+} from 'lodash';
 import VLazyImage from 'v-lazy-image';
 
 const APIURL = 'https://player.cumulusmedia.com/stations.ashx';
