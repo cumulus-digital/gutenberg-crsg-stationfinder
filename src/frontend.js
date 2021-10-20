@@ -75,7 +75,7 @@ const finder = new Vue( {
 					<label for="stations-search">
 						Search:
 					</label>
-					<input type="text" placeholder="Search..." v-on:keyup="debounceQuery" :value="query">
+					<input type="text" placeholder="Search..." v-on:keyup="debounceQuery" :value="query" aria-label="Search">
 					<button v-on:click="query = ''">Clear</button>
 				</li>
 			</ul>
@@ -94,9 +94,10 @@ const finder = new Vue( {
 						rel="noopener"
 					>
 						<figure v-if="station.image.length">
-							<v-lazy-image 
+							<v-lazy-image
 								:src="station.image.replace('http://','//')"
 								src-placeholder="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+								:alt="station.id + ' Logo'"
 							/>
 						</figure>
 						<h3>{{station.id}}</h3>
@@ -290,7 +291,7 @@ const finder = new Vue( {
 						name: stateNames[ station.state ],
 						cities: [ station.city ],
 						formats: [ station.format ]
-					};				
+					};
 				} );
 				const sortedStates = _.sortBy( states, 'name' );
 				sortedStates.forEach( function( state ) {
@@ -356,4 +357,3 @@ const stateNames = {
 	WI: 'Wisconsin',
 	WY: 'Wyoming',
 };
-

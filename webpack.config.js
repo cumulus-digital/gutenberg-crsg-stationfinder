@@ -19,17 +19,17 @@ defaultConfig.plugins = plugins;
 let rules = defaultConfig.module.rules;
 for (let i in rules) {
 	if (
-		rules[i].test.toString().includes('.svg')
+		rules[i].test.toString().indexOf('.svg') > -1
 		&& (
 			!rules[i].issuer
-			|| !rules[i].issuer.includes('jsx')
+			|| !rules[i].issuer.toString().indexOf('jsx') > -1
 		)
 	) {
 		rules[i].issuer = /\.jsx?$/;
 	}
 	// Don't inline svg
 	if (
-		rules[i].test.toString().includes('.svg')
+		rules[i].test.toString().indexOf('.svg') > -1
 		&& rules[i].type == 'asset/inline'
 	) {
 		rules[i] = {};
