@@ -75,8 +75,8 @@ const finder = new Vue( {
 					<label for="stations-search">
 						Search:
 					</label>
-					<input type="text" placeholder="Search..." v-on:keyup="debounceQuery" :value="query" aria-label="Search">
-					<button v-on:click="query = ''">Clear</button>
+					<input id="stations-search" type="text" placeholder="Search..." v-on:keyup="debounceQuery" :value="query" aria-label="Search">
+					<button v-on:click="query = ''" aria-label="Clear Search">Clear</button>
 				</li>
 			</ul>
 			<ul v-if="filteredStations.length" class="crsg-sf-stations">
