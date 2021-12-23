@@ -1,3 +1,5 @@
+@import "functions";
+
 :root {
 
 	.full-width .crsg-stationfinder,
@@ -48,13 +50,16 @@
 			&::-ms-expand {
 				display: none;
 			}
-			&:hover {
+			@include hover {
 				border-color: #888;
 			}
 			&:focus {
 				border-color: rgb(0,89,142);
 				color: #222;
 				outline: none;
+			}
+			&:focus-visible {
+				outline: 1;
 			}
 			& option {
 				font-weight:normal;
@@ -146,11 +151,15 @@
 
 			overflow: hidden;
 
-			&:hover {
+			@include hover {
 				box-shadow: 0 0 1em rgba(0,0,0,0.3);
-				border-color: 1px solid rgba(0,89,142,0.8);
+				border: 1px solid rgba(0,89,142,0.8);
 				transform: scale(1.04);
 				transform-origin: center center;
+			}
+			&:focus-visible {
+				outline: 1;
+				border: 2px solid #000;
 			}
 		}
 
