@@ -8,10 +8,11 @@
 		"lint:js": "wp-scripts lint-js",
 		"lint:pkg-json": "wp-scripts lint-pkg-json",
 		"packages-update": "wp-scripts packages-update",
-		"start": "wp-scripts start"
+		"start": "wp-scripts start",
+		"full-upgrade": "npm update; npm run packages-update; npm upgrade"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^19.2.2",
+		"@wordpress/scripts": "^24.6.0",
 		"jquery": "^3.6.0"
 	},
 	"dependencies": {
