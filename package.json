@@ -12,7 +12,7 @@
 		"full-upgrade": "npm update; npm run packages-update; npm upgrade"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^25.1.0",
+		"@wordpress/scripts": "^25.4.0",
 		"jquery": "^3.6.0"
 	},
 	"dependencies": {
