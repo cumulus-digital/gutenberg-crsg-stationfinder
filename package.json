@@ -1,6 +1,6 @@
 {
 	"name": "crsg-stationfinder",
-	"version": "2.0.15",
+	"version": "2.1.0",
 	"private": true,
 	"scripts": {
 		"build": "wp-scripts build",
@@ -12,13 +12,11 @@
 		"full-upgrade": "npm update; npm run packages-update; npm upgrade"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^25.4.0",
-		"jquery": "^3.6.0"
-	},
-	"dependencies": {
-		"intersection-observer": "^0.12.0",
-		"lodash": "^4.17.21",
-		"v-lazy-image": "^1.4.0",
-		"vue": "^2.6.11"
+		"@wordpress/scripts": "^26.0.0",
+		"intersection-observer": "^0.12.2",
+		"lodash-es": "^4.17.21",
+		"v-lazy-image": "^2.1.1",
+		"vue": "^2",
+		"vue-loader": "^15"
 	}
 }
