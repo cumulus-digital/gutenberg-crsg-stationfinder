@@ -12,7 +12,7 @@
 		"full-upgrade": "npm update; npm run packages-update; npm upgrade"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^26.4.0",
+		"@wordpress/scripts": "^26.8.0",
 		"intersection-observer": "^0.12.2",
 		"lodash-es": "^4.17.21",
 		"v-lazy-image": "^2.1.1",

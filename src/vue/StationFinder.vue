@@ -25,7 +25,7 @@
 				<label for="stations-formats">
 					Formats:
 				</label>
-				<select v-model="filters.format" id="stations-format">
+				<select v-model="filters.format" id="stations-formats">
 					<option value="all" selected="selected" v-if="filters.format == 'all'">All</option>
 					<option value="all" v-else>All</option>
 					<option v-for="format in filteredFormats" :value="format">{{ format }}</option>
