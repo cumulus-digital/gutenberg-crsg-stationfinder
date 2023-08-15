@@ -92,26 +92,35 @@ export default class StationFinder extends Component {
 		}, [state.stations, filters.state, filters.city, filters.format]);
 
 		const filteredData = useMemo(() => {
-			const stations = relevantStations;
+			const prefilteredStations = relevantStations;
 			const states = {},
 				cities = {},
 				formats = {};
 
-			stations.forEach(station => {
+			state.stations.forEach(station => {
 				if (!stateNames?.[station.state]) {
 					console.warn('Station found with no full state', station);
 					return;
 				}
+
+				// We want all states always selectable
 				states[station.state] = {
 					abbr: station.state,
 					name: stateNames[station.state]
 				};
-				const key = `${station.state}|${station.city}`;
-				cities[key] = {
-					key: key,
-					state: station.state,
-					name: station.city,
-				};
+
+				// if a state is selected, always allow selecting another city
+				if (filters.state === 'all' || station.state === filters.state) {
+					const cityKey = `${station.state}|${station.city}`;
+					cities[cityKey] = {
+						key: cityKey,
+						state: station.state,
+						name: station.city,
+					};
+				}
+			});
+
+			prefilteredStations.forEach(station => {
 				formats[station.format] = station.format;
 			});
 
@@ -131,12 +140,24 @@ export default class StationFinder extends Component {
 			}
 			setFilters(newFilters);
 
+			const emptyFilters = { ...filters };
+			if (sortedStates.length === 0) {
+				emptyFilters.state = 'all';
+			}
+			if (sortedCities.length === 0) {
+				emptyFilters.city = 'all';
+			}
+			if (sortedFormats.length === 0) {
+				emptyFilters.format = 'all';
+			}
+			setFilters(emptyFilters);
+
 			return {
 				states: sortedStates,
 				cities: sortedCities,
 				formats: sortedFormats
 			}
-		}, [relevantStations]);
+		}, [state.stations, filters.state, filters.city, filters.format]);
 
 		// Generate filtered stations
 		const filteredStations = useMemo(() => {
@@ -240,7 +261,7 @@ export default class StationFinder extends Component {
 						))
 					}
 					{!!filteredStations.length ||
-						<li>No stations found.</li>
+						<li>No stations found. Try a different filter!</li>
 					}
 				</ul>
 			</div>
