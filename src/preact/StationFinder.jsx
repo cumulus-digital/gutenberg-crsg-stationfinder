@@ -100,7 +100,8 @@ export default class StationFinder extends Component {
 		}, [state.stations, filters.state, filters.city, filters.format]);
 
 		const filteredData = useMemo(() => {
-			const states = {},
+			const stations = relevantStations,
+				states = {},
 				cities = {},
 				formats = {};
 
@@ -152,19 +153,17 @@ export default class StationFinder extends Component {
 			if (sortedFormats.length === 1) {
 				newFilters.format = sortedFormats[0];
 			}
-			setFilters(newFilters);
-
-			const emptyFilters = { ...filters };
 			if (sortedStates.length === 0) {
-				emptyFilters.state = 'all';
+				newFilters.state = 'all';
 			}
 			if (sortedCities.length === 0) {
-				emptyFilters.city = 'all';
+				newFilters.city = 'all';
 			}
 			if (sortedFormats.length === 0) {
-				emptyFilters.format = 'all';
+				newFilters.format = 'all';
 			}
-			setFilters(emptyFilters);
+
+			setFilters(newFilters);
 
 			return {
 				states: sortedStates,
@@ -195,6 +194,19 @@ export default class StationFinder extends Component {
 			return sortBy(stations, ['city', 'state', 'id']);
 		}, [relevantStations, filters.query]);
 
+		// Reset formats filter if format is filtered, city or state is selected,
+		// and no stations are found.
+		useMemo(() => {
+			if (
+				(isFiltered('state') || isFiltered('city'))
+				&& isFiltered('format')
+				&& ! filteredData.formats.includes(filters.format)
+				&& filteredStations.length === 0
+			) {
+				setFilters({ ...filters, format: 'all' });
+			}
+		}, [filteredStations]);
+
 		return (
 			<div className="crsg-stationfinder">
 				<ul className="crsg-sf-filters">
@@ -208,6 +220,7 @@ export default class StationFinder extends Component {
 								name: s.name
 							}
 						})}
+						onChange={changeStateFilter}
 					/>
 					<FilterSelector
 						type="cities"
@@ -219,6 +232,7 @@ export default class StationFinder extends Component {
 								name: s.name
 							}
 						})}
+						onChange={changeCityFilter}
 					/>
 					<FilterSelector
 						type="formats"
@@ -226,10 +240,11 @@ export default class StationFinder extends Component {
 						value={filters.format}
 						options={filteredData.formats.map(s => {
 							return {
-								value: s.name,
-								name: s.name
+								value: s,
+								name: s
 							}
 						})}
+						onChange={changeFormatFilter}
 					/>
 
 					<li className="crsg-sf-search">
@@ -252,7 +267,7 @@ export default class StationFinder extends Component {
 						</button>
 					</li>
 				</ul>
-				<ul className="crsg-sf-stations">
+				<ul className={`crsg-sf-stations ${filteredStations.length || 'crsg-sf-none'}`}>
 					{!!filteredStations.length &&
 						filteredStations.map(station => (
 							<li>

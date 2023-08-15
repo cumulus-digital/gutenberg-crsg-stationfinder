@@ -44,7 +44,7 @@
 				<Station v-bind="station" />
 			</li>
 		</ul>
-		<ul v-else class="crsg-sf-stations">
+		<ul v-else class="crsg-sf-stations ">
 			<li>No stations found.</li>
 		</ul>
 	</div>

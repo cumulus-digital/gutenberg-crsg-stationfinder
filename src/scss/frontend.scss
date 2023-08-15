@@ -104,6 +104,9 @@
 	.crsg-sf-stations {
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr 1fr;
+		&.crsg-sf-none {
+			grid-template-columns: 1fr;
+		}
 		gap: 1em;
 		//align-items: center;
 
