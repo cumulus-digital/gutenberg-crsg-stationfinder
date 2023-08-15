@@ -5,6 +5,7 @@ import { debounce, sortBy } from 'lodash-es'
 import config from './config';
 import stateNames from './statenames';
 import Station from './Station';
+import FilterSelector from './FilterSelector';
 
 const union = (arr, ...args) => [...new Set(arr.concat(...args))];
 
@@ -74,16 +75,23 @@ export default class StationFinder extends Component {
 			setFilters({ ...filters, query: e.target.value });
 		}, 200);
 
+		const isFiltered = (type) => {
+			return filters?.[type] !== 'all';
+		};
+		const hasState = (station) => station.state === filters.state;
+		const hasCity = (station) => station.city === filters.city.substring(3);
+		const hasFormat = station => station.format === filters.format;
+
 		const relevantStations = useMemo(() => {
 			const stations = state.stations.filter(station => {
 				let found = true;
-				if (filters.state !== 'all' && station.state !== filters.state) {
+				if (isFiltered('state') && !hasState(station)) {
 					found = false;
 				}
-				if (filters.city !== 'all' && station.city !== filters.city.substring(3)) {
+				if (isFiltered('city') && !hasCity(station)) {
 					found = false;
 				}
-				if (filters.format !== 'all' && station.format !== filters.format) {
+				if (isFiltered('format') && !hasFormat(station)) {
 					found = false;
 				}
 				return found;
@@ -92,7 +100,6 @@ export default class StationFinder extends Component {
 		}, [state.stations, filters.state, filters.city, filters.format]);
 
 		const filteredData = useMemo(() => {
-			const prefilteredStations = relevantStations;
 			const states = {},
 				cities = {},
 				formats = {};
@@ -109,8 +116,8 @@ export default class StationFinder extends Component {
 					name: stateNames[station.state]
 				};
 
-				// if a state is selected, always allow selecting another city
-				if (filters.state === 'all' || station.state === filters.state) {
+				// Always allow selecting another city in a selected state
+				if (!isFiltered('state') || hasState(station)) {
 					const cityKey = `${station.state}|${station.city}`;
 					cities[cityKey] = {
 						key: cityKey,
@@ -118,10 +125,17 @@ export default class StationFinder extends Component {
 						name: station.city,
 					};
 				}
-			});
 
-			prefilteredStations.forEach(station => {
-				formats[station.format] = station.format;
+				if (
+					// Show all formats if city or state is not filtered
+					(!isFiltered('state') && !isFiltered('city'))
+					// If city is selected, only show formats in that city
+					|| (isFiltered('city') && hasCity(station))
+					// If state but not city is selected, only show formats in that state
+					|| (isFiltered('state') && !isFiltered('city') && hasState(station))
+				) {
+					formats[station.format] = station.format;
+				}
 			});
 
 			const sortedStates = sortBy(Object.values(states), ['name']);
@@ -184,54 +198,40 @@ export default class StationFinder extends Component {
 		return (
 			<div className="crsg-stationfinder">
 				<ul className="crsg-sf-filters">
-					<li className="crsg-sf-states">
-						<label for="stations-states">
-							Market State:
-						</label>
-						<select
-							name="state"
-							id="stations-states"
-							value={filters.state}
-							onChange={changeStateFilter}
-						>
-							<option key="all" value="all">All</option>
-							{filteredData.states.map(s => (
-								<option key={s.abbr} value={s.abbr}>{s.name}</option>
-							))}
-						</select>
-					</li>
-					<li className="crsg-sf-cities">
-						<label for="stations-cities">
-							City:
-						</label>
-						<select
-							name="city"
-							id="stations-cities"
-							value={filters.city}
-							onChange={changeCityFilter}
-						>
-							<option key="all" value="all">All</option>
-							{filteredData.cities.map(c => (
-								<option key={c.key} value={c.key}>{c.name}</option>
-							))}
-						</select>
-					</li>
-					<li className="crsg-sf-formats">
-						<label for="stations-formats">
-							Formats:
-						</label>
-						<select
-							name="format"
-							id="stations-formats"
-							value={filters.format}
-							onChange={changeFormatFilter}
-						>
-							<option key="all" value="all">All</option>
-							{filteredData.formats.map(f => (
-								<option key={f} value={f}>{f}</option>
-							))}
-						</select>
-					</li>
+					<FilterSelector
+						type="states"
+						label="Market State:"
+						value={filters.state}
+						options={filteredData.states.map(s => {
+							return {
+								value: s.abbr,
+								name: s.name
+							}
+						})}
+					/>
+					<FilterSelector
+						type="cities"
+						label="City:"
+						value={filters.city}
+						options={filteredData.cities.map(s => {
+							return {
+								value: s.key,
+								name: s.name
+							}
+						})}
+					/>
+					<FilterSelector
+						type="formats"
+						label="Format:"
+						value={filters.format}
+						options={filteredData.formats.map(s => {
+							return {
+								value: s.name,
+								name: s.name
+							}
+						})}
+					/>
+
 					<li className="crsg-sf-search">
 						<label for="stations-search">Search:</label>
 						<input
