@@ -9,6 +9,7 @@ import Station from './Station';
 const union = (arr, ...args) => [...new Set(arr.concat(...args))];
 
 export default class StationFinder extends Component {
+	refreshTime = 14400000;
 	constructor() {
 		super();
 		this.state = {
@@ -18,7 +19,7 @@ export default class StationFinder extends Component {
 		}
 	}
 
-	componentDidMount() {
+	fetchStations() {
 		this.setState({ loading: true, status: 'Loading...' });
 		fetch(
 			config.baseURL, { method: 'GET', headers: config.headers }
@@ -30,10 +31,24 @@ export default class StationFinder extends Component {
 			resp.json().then(data => {
 				this.setState({ stations: data });
 				this.setState({ loading: false });
+			}).catch(err => {
+				this.setState({ status: 'Failed to load stations! Please try again later.' });
 			})
-		}).catch(resp => {
-			this.setState({ status: 'Failed to load stations! Please try again later. ' + (resp.reason ? resp.reason : '') });
+		}).catch(err => {
+			this.setState({ status: 'Failed to load stations! Please try again later. ' + (err.reason ? err.reason : '') });
 		});
+	}
+
+	// Fetches data and then waits between 3 and 6 hours to do it again
+	doFetchTime() {
+		this.fetchStations();
+		this.refreshTimer = setTimeout(() => {
+			this.doFetchTime();
+		}, Math.random(this.refreshTime) + this.refreshTime);
+	}
+
+	componentDidMount() {
+		this.doFetchTime();
 	}
 
 	render(props, state) {
