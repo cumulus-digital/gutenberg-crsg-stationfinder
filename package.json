@@ -12,9 +12,13 @@
 		"full-upgrade": "npm update; npm run packages-update; npm upgrade"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^26.8.0",
+		"@babel/plugin-transform-react-jsx": "^7.22.5",
+		"@babel/plugin-transform-runtime": "^7.22.10",
+		"@wordpress/scripts": "^26.10.0",
 		"intersection-observer": "^0.12.2",
 		"lodash-es": "^4.17.21",
+		"preact": "^10.17.0",
+		"preact-intersection-observer": "^2.3.6",
 		"v-lazy-image": "^2.1.1",
 		"vue": "^2",
 		"vue-loader": "^15"
