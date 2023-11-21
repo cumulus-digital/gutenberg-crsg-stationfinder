@@ -6,7 +6,7 @@ namespace CRSG\Wordpress\Gutenberg\StationFinder;
  * Plugin Name: CRSG Station Finder
  * Plugin URI: https://github.com/cumulus-digital/gutenberg-crsg-stationfinder/
  * Description: Gutenberg block for including data from the Cumulus Media Station Finder
- * Version: 2.2.3
+ * Version: 2.3.0
  * Author: vena
  * License: GPL2+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
@@ -17,7 +17,7 @@ namespace CRSG\Wordpress\Gutenberg\StationFinder;
  * @version 2.1.0
  */
 // Exit if accessed directly.
-if (! defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 

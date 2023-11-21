@@ -1,13 +1,15 @@
 const path = require('path')
 let defaultConfig = require('./node_modules/@wordpress/scripts/config/webpack.config.js');
-const { VueLoaderPlugin } = require('vue-loader')
+//const { VueLoaderPlugin } = require('vue-loader')
 
-defaultConfig.plugins.push(new VueLoaderPlugin());
+//defaultConfig.plugins.push(new VueLoaderPlugin());
 defaultConfig.module.rules.push(
+	/*
 	{
 		test: /\.vue$/,
 		loader: 'vue-loader'
 	},
+	*/
 	{
 		test: /\.m?jsx?$/,
 		exclude: /node_modules|backend\.js/,

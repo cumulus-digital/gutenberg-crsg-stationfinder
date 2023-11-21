@@ -1,45 +1,39 @@
-import { h, Component } from 'preact';
+import { h } from 'preact';
 import { ViewportObserver } from "preact-intersection-observer";
+import { useMemo } from 'preact/hooks';
 
-export default class Station extends Component {
-	constructor() {
-		super();
-	}
-	render(props) {
-		let Tag = 'div',
-			attribs = {};
-		if (props?.url?.length) {
-			Tag = 'a';
-			attribs = {
-				href: props.url,
-				target: "_blank",
-				rel: "noopener"
-			};
-		}
-		return (
-			<Tag {...attribs}>
-				{props?.image && (
-					<ViewportObserver
-						as="figure"
-						render={({ inView, entry }) => {
-							if (inView) {
-								return (
-									<img
-										src={props.image.replace('http://', 'https://')}
-										alt={`Logo for ${props.id}`}
-									/>
-								);
-							}
-							return null;
-						}}
-					/>
-				)}
-				<h3>{props.id}</h3>
-				<div className="crsg-sf-locale">{props?.city}, {props?.state}</div>
-				{props?.freq && <div className="crsg-sf-details">{props.freq}</div>}
-				{props?.calls && <div className="crsg-sf-details">{props.calls} {props?.band}</div>}
-				{props?.format && <div className="crsg-sf-details">{props.format}</div>}
-			</Tag>
-		)
-	}
+export default function Station(props) {
+	const Tag = useMemo(() => props?.url ? 'a' : 'div', [props?.url]);
+	const attribs = useMemo(() => ({
+		href: props?.url,
+		target: '_blank',
+		rel: 'noopener'
+	}), [props?.url]);
+
+	return (
+		<Tag {...attribs}>
+			{props?.image && (
+				<ViewportObserver
+					as="figure"
+					render={({ inView, entry }) => {
+						if (inView) {
+							return (
+								<img
+									src={props.image.replace('http://', 'https://')}
+									alt={`Logo for ${props.id}`}
+								/>
+							);
+						}
+						return null;
+					}}
+				/>
+			)}
+			<h3>{props.id}</h3>
+			<div className="crsg-sf-locale">{props?.city}, {props?.state}</div>
+			{props?.freq && <div className="crsg-sf-details">{props.freq}</div>}
+			{props?.calls && <div className="crsg-sf-details">{props.calls} {props?.band}</div>}
+			{props?.format && <div className="crsg-sf-details">{props.format}</div>}
+		</Tag>
+	)
+
 }

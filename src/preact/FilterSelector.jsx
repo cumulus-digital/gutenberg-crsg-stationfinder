@@ -1,23 +1,21 @@
-import { h, Component } from 'preact';
+import { h } from 'preact';
 
-export default class FilterSelector extends Component {
-	render(props) {
-		return (
-			<li className={`crsg-sf-${props.type}`}>
-				<label for={`stations-${props.type}`}>
-					{props.label}
-				</label>
-				<select
-					id={`stations-${props.type}`}
-					value={props.value}
-					onChange={props.onChange}
-				>
-					<option key="all" value="all">All</option>
-					{props.options.map(o => {
-						return <option key={o.key || o.value} value={o.value}>{o.name}</option>
-					})}
-				</select>
-			</li>
-		)
-	}
+export default function FilterSelector(props) {
+	const label = Math.ceil(Math.random() * 100000000);
+
+	return (
+		<li class={`crsg-sf-${props?.type || label}`}>
+			<label for={`stations-${props?.type || label}`}>
+				{props?.label || 'Filter:'}
+			</label>
+			<select
+				id={`stations-${props.type || label}`}
+				value={props?.value}
+				onChange={props?.onChange}
+			>
+				<option key="all" value="all">All</option>
+				{props?.options?.map(o => <option key={o?.key || o?.value} value={o?.value}>{o?.name || o?.value}</option>)}
+			</select>
+		</li>
+	)
 }
