@@ -124,7 +124,7 @@ export const store = deepSignal({
 
 			if (store.query.length) {
 				const searchable = [
-					station?.id, station?.format, station?.freq,
+					station?.id, station?.format, station?.freq, station?.url,
 					station?.calls, station?.band, station?.city, station?.state
 				].map(v => typeof v === 'string' ? v?.toLowerCase() : String(v).toLowerCase());
 				if (!searchable.filter(v => v.includes(store.query.toLowerCase()))?.length) {
