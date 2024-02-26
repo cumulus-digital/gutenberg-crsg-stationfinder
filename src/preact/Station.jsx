@@ -28,7 +28,7 @@ export default function Station(props) {
 					}}
 				/>
 			)}
-			<h3>{props.id}</h3>
+			{`<!-- <h3>${props.id}</h3> -->`}
 			<div className="crsg-sf-locale">{props?.city}, {props?.state}</div>
 			{props?.freq && <div className="crsg-sf-details">{props.freq}</div>}
 			{props?.calls && <div className="crsg-sf-details">{props.calls} {props?.band}</div>}
